@@ -1,0 +1,284 @@
+/*
+ * letterhead.css — print any HTML on top of a full-page letterhead image.
+ *
+ * Markup (see docs/guide.md):
+ *
+ *   <div class="lh-root">
+ *     <img class="lh-bg" src="letterhead.png" alt="">
+ *     <table class="lh-doc">
+ *       <thead><tr><td><div class="lh-top"></div></td></tr></thead>
+ *       <tbody><tr><td class="lh-content"> ...your content... </td></tr></tbody>
+ *       <tfoot><tr><td><div class="lh-bottom"></div></td></tr></tfoot>
+ *     </table>
+ *     <div class="lh-pages"></div>   <!-- filled by letterhead.js -->
+ *   </div>
+ *
+ * Tune per letterhead with CSS variables on .lh-root (or inline style):
+ *   --lh-top     blank space reserved for the image's header   (default 58mm)
+ *   --lh-bottom  blank space reserved for the image's footer   (default 40mm)
+ *   --lh-side    left/right text padding                      (default 15mm)
+ * Each rule has a literal fallback first, so engines without CSS variables
+ * (wkhtmltopdf) still get the defaults.
+ */
+
+.lh-root {
+  --lh-top: 58mm;
+  --lh-bottom: 40mm;
+  --lh-side: 15mm;
+}
+
+/* ---------- the content table (used for print) ---------- */
+.lh-doc {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: #fff;
+}
+.lh-doc > thead {
+  display: table-header-group; /* repeat the top spacer on every page */
+}
+.lh-doc > tfoot {
+  display: table-footer-group; /* repeat the bottom spacer on every page */
+}
+.lh-doc > thead > tr > td,
+.lh-doc > tfoot > tr > td {
+  padding: 0;
+  border: 0;
+}
+.lh-top {
+  height: 58mm;
+  height: var(--lh-top);
+}
+.lh-bottom {
+  height: 40mm;
+  height: var(--lh-bottom);
+}
+.lh-content {
+  padding: 0 15mm;
+  padding: 0 var(--lh-side);
+}
+.lh-doc tr {
+  page-break-inside: avoid;
+}
+
+/* the background image only shows in print (screen uses the sheets below) */
+.lh-bg {
+  display: none;
+}
+
+/* ---------- screen preview: A4 sheets built by letterhead.js ---------- */
+.lh-pages {
+  display: none;
+}
+@media screen {
+  .lh-root.lh-paged {
+    background: #e9ecef;
+  }
+  .lh-root.lh-paged > .lh-doc {
+    display: none;
+  }
+  .lh-root.lh-paged > .lh-pages {
+    display: block;
+    overflow-x: auto;
+    padding: 10mm 0;
+  }
+  .lh-sheet {
+    margin: 0 auto 10mm;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  }
+}
+.lh-sheet {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  padding: 58mm 15mm 40mm;
+  padding: var(--lh-top) var(--lh-side) var(--lh-bottom);
+  box-sizing: border-box;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: top left;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+.lh-sheet-area {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* "Show margins": outline the text area of each sheet (screen only) */
+@media screen {
+  .lh-root.lh-guides .lh-sheet-area,
+  .lh-root.lh-guides .lh-content {
+    outline: 1px dashed #e53935;
+    outline-offset: 0;
+  }
+}
+
+/* ---------- settings panel (Letterhead.settings / <LetterheadSettings>) ---------- */
+.lh-settings {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  max-width: calc(100vw - 32px);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  color: #222;
+}
+[dir="rtl"] .lh-settings,
+.lh-settings[dir="rtl"] {
+  right: auto;
+  left: 16px;
+}
+.lh-settings-toggle {
+  display: block;
+  margin-inline-start: auto;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #1e88e5;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.lh-settings-body {
+  display: none;
+  width: 280px;
+  max-width: 100%;
+  margin-top: 8px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+.lh-settings.lh-open .lh-settings-toggle {
+  display: none;
+}
+.lh-settings.lh-open .lh-settings-body {
+  display: block;
+}
+.lh-settings-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.lh-settings label {
+  display: block;
+  margin-bottom: 10px;
+}
+.lh-settings label > span {
+  display: block;
+  margin-bottom: 3px;
+  color: #555;
+}
+.lh-settings input[type="number"],
+.lh-settings input[type="file"] {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+}
+.lh-settings input[type="number"] {
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.lh-settings label.lh-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lh-settings label.lh-check > span {
+  display: inline;
+  margin: 0;
+  color: inherit;
+}
+.lh-settings-hint {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #777;
+}
+.lh-settings-status {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #c62828;
+}
+.lh-settings-status:empty {
+  display: none;
+}
+.lh-settings-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.lh-settings-actions button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f5f5f5;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---------- print ---------- */
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  /* Default print mode: one fixed image, repeated by the browser on every page.
+     Works in Chrome/Edge. Ancestors of .lh-bg must NOT have transform/filter. */
+  .lh-bg {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210mm;
+    height: 297mm;
+    z-index: 0;
+  }
+  .lh-doc {
+    position: relative;
+    z-index: 1;
+    width: 210mm;
+    max-width: none;
+    background: transparent !important;
+  }
+  .lh-pages,
+  .lh-settings {
+    display: none !important;
+  }
+  .lh-content .lh-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* "Sheets" print mode: add class lh-print-sheets to .lh-root to print the
+     paginated sheets instead (one sheet = one page, image on each sheet).
+     For engines that do not repeat fixed elements, e.g. wkhtmltopdf. */
+  .lh-root.lh-print-sheets > .lh-bg,
+  .lh-root.lh-print-sheets > .lh-doc {
+    display: none !important;
+  }
+  .lh-root.lh-print-sheets > .lh-pages {
+    display: block !important;
+  }
+  .lh-root.lh-print-sheets .lh-sheet {
+    margin: 0;
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .lh-root.lh-print-sheets .lh-sheet:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}

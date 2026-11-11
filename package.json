@@ -1,0 +1,40 @@
+{
+  "name": "letterhead-print",
+  "version": "1.0.0",
+  "description": "Print HTML with a full-page letterhead image as the background of every page, with an A4 page preview on screen. Plain HTML and React.",
+  "private": true,
+  "main": "src/letterhead.js",
+  "style": "src/letterhead.css",
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "print",
+    "letterhead",
+    "page-background",
+    "a4",
+    "pagination",
+    "pdf",
+    "react",
+    "rtl"
+  ],
+  "scripts": {
+    "build:example": "esbuild examples/react/main.jsx --bundle --outdir=examples/react/dist --jsx=automatic --log-level=warning",
+    "screenshots": "npm run build:example && node scripts/screenshots.mjs",
+    "pdf": "node scripts/screenshots.mjs --pdf-only"
+  },
+  "peerDependencies": {
+    "react": ">=17"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "esbuild": "0.25.0",
+    "playwright": "1.55.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

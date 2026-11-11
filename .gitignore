@@ -1,0 +1,20 @@
+# dependencies & build output
+node_modules/
+examples/react/dist/
+
+# generated PDFs (npm run pdf)
+output/
+
+# personal tests and old versions — kept locally, not part of the project
+backup/
+
+# local tooling
+.opencode/
+.claude/settings.local.json
+
+# logs / OS / editor
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

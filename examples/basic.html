@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Letterhead Example</title>
+    <link rel="stylesheet" href="../src/letterhead.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+      }
+      h2 {
+        color: #1e88e5;
+      }
+      table.data {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table.data th,
+      table.data td {
+        border: 1px solid #ccc;
+        padding: 4px 8px;
+      }
+      table.data thead th {
+        background: #e3f2fd;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Per-letterhead tuning: change the three spacings here -->
+    <div class="lh-root" style="--lh-top: 52mm; --lh-bottom: 58mm; --lh-side: 15mm">
+      <img class="lh-bg" src="assets/letterhead.png" alt="" />
+      <table class="lh-doc">
+        <thead><tr><td><div class="lh-top"></div></td></tr></thead>
+        <tbody>
+          <tr>
+            <td class="lh-content">
+              <h1>Invoice #1024</h1>
+              <p>
+                This example shows the letterhead library on a plain HTML page.
+                The content below is long enough to need several pages; on
+                screen it is shown as A4 sheets, and when printed the letterhead
+                image is the background of every page.
+              </p>
+              <h2>Line items</h2>
+              <table class="data" id="items">
+                <thead>
+                  <tr><th>#</th><th>Description</th><th>Qty</th><th>Amount</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+              <h2 class="lh-break-before">Terms</h2>
+              <p>
+                This heading has class <code>lh-break-before</code>, so it
+                always starts a new page.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot><tr><td><div class="lh-bottom"></div></td></tr></tfoot>
+      </table>
+      <div class="lh-pages"></div>
+    </div>
+
+    <script>
+      // demo data: 45 rows so the table spans pages
+      var tb = document.querySelector("#items tbody");
+      for (var i = 1; i <= 45; i++) {
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + i + "</td><td>Service item " + i + "</td><td>1</td><td>" +
+          i * 100 + "</td>";
+        tb.appendChild(tr);
+      }
+    </script>
+    <script src="../src/letterhead.js"></script>
+    <script>
+      Letterhead.settings(document.querySelector(".lh-root"), {
+        storageKey: "example-letterhead",
+      });
+      Letterhead.auto();
+    </script>
+  </body>
+</html>
